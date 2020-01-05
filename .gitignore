@@ -1,0 +1,5 @@
+# User-specific files
+*.user
+
+# Build results
+obj/
