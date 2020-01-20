@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -77,16 +78,19 @@ namespace HexFormatter
             text = text?.Replace("\n", "");
             text = text?.Trim();
 
+            var count = 0;
             var index = 0;
             var length = text.Length;
             string outText = "";
             while (length > 0)
             {
-                outText += text.Substring(index * WordSize * 2, Math.Min(length, WordSize * 2));
+                var word = text.Substring(index * WordSize * 2, Math.Min(length, WordSize * 2));
+                outText += word;
                 length -= 2 * WordSize;
                 index += 1;
+                count += word.Length / 2;
 
-                if ((index % BytesPerLine) == 0)
+                if ((count % BytesPerLine) == 0)
                 {
                     outText += "\r\n";
                 }
@@ -97,6 +101,7 @@ namespace HexFormatter
             }
 
             TextDst.Text = outText;
+            StatusBarText.Text = $"{count}";
         }
 
         private void TextSrc_TextChanged(object sender, TextChangedEventArgs e)
@@ -123,7 +128,67 @@ namespace HexFormatter
 
         private void LoadFileAsSrc(FileInfo info)
         {
+            var bytes = System.IO.File.ReadAllBytes(info.FullName);
 
+            // bytes to string
+
+            TextSrc.Text = bytes.Length.ToString();
+        }
+
+        private int CheckDataType(byte[] bytes)
+        {
+            int status = 0;
+
+            // handling white space should be added
+            for (int i = 0; i < Math.Min(1024, bytes.Length); ++i)
+            {
+                if (IsBinary(bytes[i]))
+                {
+                    status |= 0b1;
+                }
+                else if (IsBinaryString(bytes[i]))
+                {
+                    status |= 0b10;
+                }
+                else if (IsHexaDecimal(bytes[i]))
+                {
+                    status |= 0b100;
+                }
+                else
+                {
+                    status |= 0b1000;
+                }
+            }
+
+            return status;
+        }
+
+        private bool IsBinary(byte letter)
+        {
+            return letter == 0 || letter == 1;
+        }
+
+        private bool IsBinaryString(byte letter)
+        {
+            return letter == '0' || letter == '1' || IsWhiteSpace(letter);
+        }
+
+        private bool IsHexaDecimal(byte letter)
+        {
+            return (letter >= '0' && letter <= '9') || (letter >= 'a' && letter <= 'f') || (letter >= 'A' && letter <= 'F') || IsWhiteSpace(letter);
+        }
+
+        private bool IsWhiteSpace(byte letter)
+        {
+            return letter == ' ' || letter == '\t' || letter == '\r' || letter == '\n';
+        }
+
+        private void Window_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke((ThreadStart)(() => {
+                TextSrc.Text = Clipboard.GetText();
+                Clipboard.SetText(TextDst.Text);
+            }));
         }
     }
 }

@@ -5,27 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HexFormatter"
         mc:Ignorable="d"
+        GotFocus="Window_GotFocus"
         Title="Hex Formatter" Height="600" Width="1024">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Name="StatusBarText"/>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox Text="{Binding WordSize}"/>
-            <Label Content="바이트 단위로 한 줄에 "/>            
-            <TextBox Text="{Binding BytesPerLine}"/>
-            <Label Content="바이트씩 출력합니다."/>
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox Text="{Binding WordSize}" TextAlignment="Center"/>
+                <Label Content="바이트 단위로 한 줄에 "/>
+                <TextBox Text="{Binding BytesPerLine}"/>
+                <Label Content="바이트씩 출력합니다."/>
+            </StackPanel>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0"
+                <TextBox Grid.Column="0"
                      Name="TextSrc" AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
                      TextChanged="TextSrc_TextChanged" 
                      AllowDrop="True" 
@@ -33,10 +41,11 @@
                      PreviewDragOver="TextSrc_PreviewDragOver"
                      PreviewDrop="TextSrc_PreviewDrop"
                      />
-            <TextBox Grid.Column="1" 
+                <TextBox Grid.Column="1" 
                      Name="TextDst" IsReadOnly="True"  FontFamily="Consolas" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
                      />
+            </Grid>
         </Grid>
-        
-    </Grid>
+    </DockPanel>
+    
 </Window>

@@ -1,3 +1,7 @@
+# VS temporal files
+.vs/
+bin/
+
 # User-specific files
 *.user
 
